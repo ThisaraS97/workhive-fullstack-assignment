@@ -17,15 +17,27 @@ export default function Toast() {
 
   if (!toast) return null;
 
-  const colors = {
-    success: 'bg-emerald-600',
-    error: 'bg-red-600',
-    info: 'bg-slate-800',
+  const styles = {
+    success: 'border-emerald-200 bg-white text-emerald-900 ring-emerald-100',
+    error: 'border-red-200 bg-white text-red-900 ring-red-100',
+    info: 'border-slate-200 bg-white text-slate-900 ring-slate-100',
+  };
+
+  const icons = {
+    success: '✓',
+    error: '!',
+    info: 'i',
   };
 
   return (
-    <div className={`fixed bottom-4 right-4 z-50 rounded-lg px-4 py-3 text-sm text-white shadow-lg ${colors[toast.type]}`}>
-      {toast.message}
+    <div
+      className={`fixed bottom-5 right-5 z-50 flex max-w-sm items-start gap-3 rounded-2xl border px-4 py-3 text-sm font-medium shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ${styles[toast.type]}`}
+      role="status"
+    >
+      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-current/10 text-xs font-bold">
+        {icons[toast.type]}
+      </span>
+      <span>{toast.message}</span>
     </div>
   );
 }

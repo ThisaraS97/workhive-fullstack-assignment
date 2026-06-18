@@ -9,6 +9,7 @@ import { api, resumeUrl } from '@/lib/api';
 import { updateApplicantAction, updateJobAction } from '@/actions/jobs';
 import { setLoading, showToast } from '@/store/uiSlice';
 import type { Application, Job } from '@/types';
+import { EmptyState, LoadingState, PageSection } from '@/components/ui/Common';
 
 export default function EmployerJobsPage() {
   const { data: session, status } = useSession();
@@ -75,37 +76,48 @@ export default function EmployerJobsPage() {
     }
   }
 
-  if (status === 'loading') return <p className="p-8 text-center">Loading...</p>;
+  if (status === 'loading') return <LoadingState />;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">My posted jobs</h1>
-          <p className="text-slate-600">Manage listings and review applicants.</p>
-        </div>
-        <Link href="/employer/post" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white">
+    <PageSection
+      badge="Employer"
+      title="My posted jobs"
+      subtitle="Manage listings and review applicants."
+      action={
+        <Link href="/employer/post" className="wh-btn-primary">
           Post new job
         </Link>
-      </div>
-
+      }
+    >
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 font-semibold">Jobs</h2>
+        <section className="wh-panel p-6">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">Jobs</h2>
           <div className="space-y-3">
             {jobs.map((job) => (
-              <div key={job.id} className="rounded-xl border border-slate-100 p-3">
-                <div className="flex items-start justify-between gap-2">
+              <div
+                key={job.id}
+                className={`rounded-2xl border p-4 transition ${
+                  selectedJob === job.id
+                    ? 'border-blue-200 bg-blue-50/50 ring-1 ring-blue-100'
+                    : 'border-slate-100 bg-slate-50/50 hover:border-slate-200'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-medium">{job.title}</p>
-                    <p className="text-xs text-slate-500">{job.location} · {job.status}</p>
+                    <p className="font-semibold text-slate-900">{job.title}</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {job.location} · <span className="capitalize">{job.status}</span>
+                    </p>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => loadApplicants(job.id)} className="text-sm text-indigo-600 hover:underline">
+                  <div className="flex shrink-0 gap-3">
+                    <button
+                      onClick={() => loadApplicants(job.id)}
+                      className="wh-action-link wh-action-neutral"
+                    >
                       Applicants
                     </button>
                     {job.status === 'active' && (
-                      <button onClick={() => closeJob(job)} className="text-sm text-red-600 hover:underline">
+                      <button onClick={() => closeJob(job)} className="wh-action-link wh-action-reject">
                         Close
                       </button>
                     )}
@@ -113,46 +125,65 @@ export default function EmployerJobsPage() {
                 </div>
               </div>
             ))}
+            {jobs.length === 0 && <EmptyState>No jobs posted yet.</EmptyState>}
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 font-semibold">Applicants</h2>
-          {!selectedJob && <p className="text-sm text-slate-500">Select a job to view applicants.</p>}
+        <section className="wh-panel p-6">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">Applicants</h2>
+          {!selectedJob && (
+            <EmptyState>Select a job to view applicants.</EmptyState>
+          )}
           {selectedJob && (
-            <table className="min-w-full text-left text-sm">
-              <thead>
-                <tr className="text-slate-500">
-                  <th className="py-2">Name</th>
-                  <th className="py-2">Date</th>
-                  <th className="py-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applicants.map((app) => (
-                  <tr key={app.id} className="border-t border-slate-100">
-                    <td className="py-2">{app.user?.name}</td>
-                    <td className="py-2">{new Date(app.appliedAt).toLocaleDateString()}</td>
-                    <td className="py-2">
-                      <div className="flex flex-wrap gap-2">
-                        <a href={resumeUrl(app.resumeUrl)} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">
-                          View Resume
-                        </a>
-                        <button onClick={() => handleStatus(app.id, 'accepted')} className="text-emerald-600 hover:underline">
-                          Accept
-                        </button>
-                        <button onClick={() => handleStatus(app.id, 'rejected')} className="text-red-600 hover:underline">
-                          Reject
-                        </button>
-                      </div>
-                    </td>
+            <div className="wh-table-wrap !shadow-none !ring-0">
+              <table className="wh-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {applicants.map((app) => (
+                    <tr key={app.id}>
+                      <td className="font-medium text-slate-900">{app.user?.name}</td>
+                      <td className="text-slate-600">{new Date(app.appliedAt).toLocaleDateString()}</td>
+                      <td>
+                        <div className="flex flex-wrap gap-3">
+                          <a
+                            href={resumeUrl(app.resumeUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="wh-action-link wh-action-neutral"
+                          >
+                            Resume
+                          </a>
+                          <button
+                            onClick={() => handleStatus(app.id, 'accepted')}
+                            className="wh-action-link wh-action-accept"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => handleStatus(app.id, 'rejected')}
+                            className="wh-action-link wh-action-reject"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {applicants.length === 0 && (
+                <EmptyState>No applicants for this job yet.</EmptyState>
+              )}
+            </div>
           )}
         </section>
       </div>
-    </main>
+    </PageSection>
   );
 }

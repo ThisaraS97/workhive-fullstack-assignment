@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
 import { showToast } from '@/store/uiSlice';
+import { PageHeader, TextInput } from '@/components/ui/Form';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -39,59 +40,47 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="mx-auto flex max-w-md flex-col px-4 py-12">
-      <h1 className="text-2xl font-bold text-slate-900">Login</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        New here?{' '}
-        <Link href="/auth/register" className="text-indigo-600 hover:underline">
-          Create an account
-        </Link>
-      </p>
+    <main className="mx-auto flex max-w-md flex-col px-4 py-12 md:py-16">
+      <PageHeader
+        title="Welcome back"
+        subtitle={
+          <>
+            New here?{' '}
+            <Link href="/auth/register" className="font-semibold text-blue-600 hover:underline">
+              Create an account
+            </Link>
+          </>
+        }
+      />
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
-        <Field label="Email" name="email" type="email" value={email} onChange={setEmail} error={error && !email ? 'Email is required' : ''} />
-        <Field label="Password" name="password" type="password" value={password} onChange={setPassword} error={error} />
+      <form onSubmit={handleSubmit} className="wh-card space-y-5">
+        <TextInput
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={error && !email ? 'Email is required' : ''}
+          placeholder="you@company.com"
+        />
+        <TextInput
+          label="Password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={error}
+          placeholder="Enter your password"
+        />
 
-        <button type="submit" className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700">
+        <button type="submit" className="wh-btn-primary w-full">
           Sign in
         </button>
       </form>
 
-      <p className="mt-4 text-xs text-slate-500">Demo: seeker1@example.com / Password123!</p>
+      <p className="mt-5 text-center text-xs text-slate-500">Demo: seeker1@example.com / Password123!</p>
     </main>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = 'text',
-  value,
-  onChange,
-  error,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label htmlFor={name} className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-lg border px-3 py-2 text-sm ${error ? 'border-red-400' : 'border-slate-300'}`}
-      />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-    </div>
   );
 }

@@ -33,26 +33,22 @@ export default function FilterBar({ onChange }: FilterBarProps) {
   }, [filters, onChange]);
 
   return (
-    <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-4 shadow-sm ring-1 ring-black/5 backdrop-blur-xl">
-      <div className="grid gap-3 md:grid-cols-12 md:items-end">
+    <div className="wh-card !p-5">
+      <div className="grid gap-4 md:grid-cols-12 md:items-end">
         <div className="md:col-span-5">
-          <label className="mb-1 block text-xs font-semibold text-slate-600">Keyword</label>
+          <label className="wh-label !mb-1.5 !text-xs !text-slate-600">Keyword</label>
           <input
             type="search"
             placeholder="e.g. frontend, node, designer..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm ring-1 ring-black/5 placeholder:text-slate-400 focus:border-indigo-300"
+            className="wh-input"
           />
         </div>
 
         <div className="md:col-span-3">
-          <label className="mb-1 block text-xs font-semibold text-slate-600">Location</label>
-          <select
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm ring-1 ring-black/5 focus:border-indigo-300"
-          >
+          <label className="wh-label !mb-1.5 !text-xs !text-slate-600">Location</label>
+          <select value={location} onChange={(e) => setLocation(e.target.value)} className="wh-select">
             {LOCATIONS.map((loc) => (
               <option key={loc || 'all'} value={loc}>
                 {loc || 'All locations'}
@@ -62,12 +58,8 @@ export default function FilterBar({ onChange }: FilterBarProps) {
         </div>
 
         <div className="md:col-span-2">
-          <label className="mb-1 block text-xs font-semibold text-slate-600">Category</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm ring-1 ring-black/5 focus:border-indigo-300"
-          >
+          <label className="wh-label !mb-1.5 !text-xs !text-slate-600">Category</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="wh-select">
             {CATEGORIES.map((cat) => (
               <option key={cat || 'all'} value={cat}>
                 {cat || 'All categories'}
@@ -77,20 +69,20 @@ export default function FilterBar({ onChange }: FilterBarProps) {
         </div>
 
         <div className="md:col-span-2">
-          <label className="mb-1 block text-xs font-semibold text-slate-600">Min salary</label>
+          <label className="wh-label !mb-1.5 !text-xs !text-slate-600">Min salary</label>
           <input
             type="number"
             placeholder="90000"
             value={salaryMin}
             onChange={(e) => setSalaryMin(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm ring-1 ring-black/5 placeholder:text-slate-400 focus:border-indigo-300"
+            className="wh-input"
           />
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
-        <span className="font-medium">
-          Tip: search is <span className="text-slate-900">debounced 300ms</span> to stay fast.
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
+        <span>
+          Search is <span className="font-semibold text-slate-800">debounced 300ms</span> for a smooth experience.
         </span>
         <button
           type="button"
@@ -100,9 +92,9 @@ export default function FilterBar({ onChange }: FilterBarProps) {
             setCategory('');
             setSalaryMin('');
           }}
-          className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-200"
+          className="wh-pill transition hover:bg-slate-200"
         >
-          Clear
+          Clear filters
         </button>
       </div>
     </div>

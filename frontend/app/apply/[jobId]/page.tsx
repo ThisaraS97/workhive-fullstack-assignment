@@ -6,6 +6,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { applyAction } from '@/actions/jobs';
 import { setLoading, showToast } from '@/store/uiSlice';
+import { FileUpload, FormAlert, PageHeader, TextArea } from '@/components/ui/Form';
+import { LoadingState } from '@/components/ui/Common';
 
 export default function ApplyPage() {
   const { data: session, status } = useSession();
@@ -39,52 +41,51 @@ export default function ApplyPage() {
   }
 
   if (status === 'loading') {
-    return <p className="p-8 text-center">Loading...</p>;
+    return <LoadingState />;
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900">Apply for this job</h1>
-      <p className="mt-2 text-sm text-slate-600">Signed in as {session?.user?.name}</p>
+    <main className="mx-auto max-w-2xl px-4 py-10 md:py-14">
+      <PageHeader
+        badge="Job application"
+        title="Apply for this role"
+        subtitle={`Signed in as ${session?.user?.name}. Tell the employer why you're a great fit.`}
+      />
 
-      <form action={handleSubmit} className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
-        <div>
-          <label htmlFor="coverLetter" className="mb-1 block text-sm font-medium text-slate-700">
-            Cover letter
-          </label>
-          <textarea
-            id="coverLetter"
-            name="coverLetter"
-            required
-            minLength={10}
-            rows={6}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            placeholder="Tell the employer why you are a great fit..."
-          />
+      <form action={handleSubmit} className="wh-card space-y-7">
+        <TextArea
+          id="coverLetter"
+          name="coverLetter"
+          label="Cover letter"
+          hint="A few thoughtful sentences go a long way."
+          required
+          minLength={10}
+          rows={7}
+          placeholder="Share your relevant experience, what excites you about this role, and what you'd bring to the team..."
+        />
+
+        <FileUpload
+          id="resume"
+          name="resume"
+          label="Resume"
+          accept="application/pdf"
+          required
+        />
+
+        {error && <FormAlert>{error}</FormAlert>}
+
+        <div className="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-6">
+          <button type="submit" className="wh-btn-primary">
+            Submit application
+          </button>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="wh-btn-secondary"
+          >
+            Cancel
+          </button>
         </div>
-
-        <div>
-          <label htmlFor="resume" className="mb-1 block text-sm font-medium text-slate-700">
-            Resume (PDF, max 5 MB)
-          </label>
-          <input
-            id="resume"
-            name="resume"
-            type="file"
-            accept="application/pdf"
-            required
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-          />
-        </div>
-
-        {error && <p className="text-sm text-red-600">{error}</p>}
-
-        <button
-          type="submit"
-          className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
-        >
-          Submit Application
-        </button>
       </form>
     </main>
   );

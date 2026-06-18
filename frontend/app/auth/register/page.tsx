@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 import { setCredentials } from '@/store/authSlice';
 import { showToast } from '@/store/uiSlice';
 import type { Role } from '@/types';
+import { FormField, PageHeader, TextInput } from '@/components/ui/Form';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -52,71 +53,60 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="text-2xl font-bold text-slate-900">Register</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        Already have an account?{' '}
-        <Link href="/auth/login" className="text-indigo-600 hover:underline">
-          Login
-        </Link>
-      </p>
+    <main className="mx-auto max-w-md px-4 py-12 md:py-16">
+      <PageHeader
+        title="Create your account"
+        subtitle={
+          <>
+            Already have an account?{' '}
+            <Link href="/auth/login" className="font-semibold text-blue-600 hover:underline">
+              Sign in
+            </Link>
+          </>
+        }
+      />
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
-        <Input label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} error={errors.name} />
-        <Input label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} error={errors.email} />
-        <Input label="Password" type="password" value={form.password} onChange={(v) => setForm({ ...form, password: v })} error={errors.password} />
+      <form onSubmit={handleSubmit} className="wh-card space-y-5">
+        <TextInput
+          label="Name"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          error={errors.name}
+          placeholder="Your full name"
+        />
+        <TextInput
+          label="Email"
+          type="email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          error={errors.email}
+          placeholder="you@company.com"
+        />
+        <TextInput
+          label="Password"
+          type="password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          error={errors.password}
+          placeholder="At least 8 characters"
+        />
 
-        <div>
-          <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-700">
-            I am a
-          </label>
+        <FormField label="I am a" id="role">
           <select
             id="role"
             value={form.role}
             onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="wh-select"
           >
             <option value="seeker">Job Seeker</option>
             <option value="employer">Employer</option>
           </select>
-        </div>
+        </FormField>
 
-        <button type="submit" className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700">
+        <button type="submit" className="wh-btn-primary w-full">
           Create account
         </button>
       </form>
     </main>
-  );
-}
-
-function Input({
-  label,
-  value,
-  onChange,
-  type = 'text',
-  error,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-  error?: string;
-}) {
-  const id = label.toLowerCase();
-  return (
-    <div>
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
-      <input
-        id={id}
-        type={type}
-        required
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-lg border px-3 py-2 text-sm ${error ? 'border-red-400' : 'border-slate-300'}`}
-      />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-    </div>
   );
 }

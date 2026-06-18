@@ -28,6 +28,10 @@ async function request<T>(
     headers.set('Authorization', `Bearer ${token}`);
   }
 
+  if (API_URL.includes('ngrok')) {
+    headers.set('ngrok-skip-browser-warning', 'true');
+  }
+
   const res = await fetch(buildUrl(path, params), { ...init, headers, cache: 'no-store' });
   const json = (await res.json()) as ApiResponse<T>;
 

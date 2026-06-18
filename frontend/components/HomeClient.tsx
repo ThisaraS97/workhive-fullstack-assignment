@@ -37,19 +37,24 @@ function HomeClient({ initialJobs }: { initialJobs: Job[] }) {
   return (
     <div className="space-y-6">
       <FilterBar onChange={handleFilterChange} />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {jobs.map((job) => (
           <JobCard key={job.id} job={job} />
         ))}
       </div>
-      {jobs.length === 0 && <p className="text-center text-slate-500">No jobs match your filters.</p>}
+      {jobs.length === 0 && (
+        <div className="wh-card !py-16 text-center">
+          <p className="text-base font-semibold text-slate-900">No jobs match your filters</p>
+          <p className="mt-2 text-sm text-slate-500">Try adjusting your search criteria.</p>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function HomeClientWrapper({ initialJobs }: { initialJobs: Job[] }) {
   return (
-    <Suspense fallback={<p>Loading filters...</p>}>
+    <Suspense fallback={<p className="text-center text-slate-500">Loading filters...</p>}>
       <HomeClient initialJobs={initialJobs} />
     </Suspense>
   );
