@@ -42,8 +42,25 @@ async function request<T>(
     headers.set('ngrok-skip-browser-warning', 'true');
   }
 
-  const res = await fetch(buildUrl(path, params), { ...init, headers, cache: 'no-store' });
-  const json = (await res.json()) as ApiResponse<T>;
+  let res: Response;
+  try {
+    res = await fetch(buildUrl(path, params), { ...init, headers, cache: 'no-store' });
+  } catch {
+    throw new ApiError(
+      'Unable to reach the API. Make sure the backend and ngrok tunnel are running.',
+      'API_UNREACHABLE'
+    );
+  }
+
+  let json: ApiResponse<T>;
+  try {
+    json = (await res.json()) as ApiResponse<T>;
+  } catch {
+    throw new ApiError(
+      'Unable to reach the API. Make sure the backend and ngrok tunnel are running.',
+      'API_UNREACHABLE'
+    );
+  }
 
   if (!json.success) {
     throw new ApiError(json.error?.message || 'Request failed', json.error?.code || 'REQUEST_FAILED');

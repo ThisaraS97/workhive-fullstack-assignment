@@ -4,10 +4,28 @@ import HomeClientWrapper from '@/components/HomeClient';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const jobs = await api.getJobs();
+  let jobs: Awaited<ReturnType<typeof api.getJobs>> = [];
+  let apiError = '';
+
+  try {
+    jobs = await api.getJobs();
+  } catch (error) {
+    apiError =
+      error instanceof Error
+        ? error.message
+        : 'Unable to load jobs. Make sure the backend and ngrok tunnel are running.';
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
+      {apiError && (
+        <div className="wh-alert-error mb-8" role="alert">
+          <span>
+            <strong>Backend unavailable.</strong> {apiError} Start Docker, run ngrok on port 5000, and
+            confirm Vercel <code className="text-xs">NEXT_PUBLIC_API_URL</code> matches your ngrok URL.
+          </span>
+        </div>
+      )}
       <section className="mb-12">
         <div className="wh-card grid gap-10 md:grid-cols-2 md:items-center">
           <div>
