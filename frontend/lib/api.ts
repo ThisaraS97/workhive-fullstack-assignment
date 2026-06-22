@@ -2,6 +2,16 @@ import type { ApiResponse, Job, Application, JobFilters, User } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+export class ApiError extends Error {
+  code: string;
+
+  constructor(message: string, code: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+  }
+}
+
 function buildUrl(path: string, params?: Record<string, string | number | undefined>) {
   const url = new URL(`${API_URL}/api/v1${path}`);
   if (params) {
@@ -36,7 +46,7 @@ async function request<T>(
   const json = (await res.json()) as ApiResponse<T>;
 
   if (!json.success) {
-    throw new Error(json.error?.message || 'Request failed');
+    throw new ApiError(json.error?.message || 'Request failed', json.error?.code || 'REQUEST_FAILED');
   }
 
   return json.data as T;

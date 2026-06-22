@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@/auth';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
 import { revalidatePath } from 'next/cache';
 
 export async function applyAction(formData: FormData) {
@@ -35,9 +35,15 @@ export async function applyAction(formData: FormData) {
     });
 
     revalidatePath('/dashboard');
-    return { success: true };
+    return { success: true as const };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : 'Application failed' };
+    if (error instanceof ApiError) {
+      return { success: false as const, error: error.message, code: error.code };
+    }
+    return {
+      success: false as const,
+      error: error instanceof Error ? error.message : 'Application failed',
+    };
   }
 }
 
